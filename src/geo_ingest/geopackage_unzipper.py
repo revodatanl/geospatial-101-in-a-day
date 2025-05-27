@@ -5,35 +5,42 @@ from typing import List
 
 class GeoPackageUnzipper:
     """
-    Unzips selected .zip files from an Azure Blob Storage container,
-    extracts .gpkg files, and uploads them to another directory in the container.
+    Unzips selected .zip files from cloud storage (Azure or AWS S3),
+    extracts .gpkg files, and uploads them to another directory.
     Skips files if the corresponding .gpkg already exists in the output directory.
     """
 
     def __init__(
         self,
         dbutils,
-        storage_account_name: str,
-        container_name: str,
+        cloud_provider: str,
+        container_or_bucket: str,
         input_dir: str,
         output_dir: str,
+        storage_account_name: str = "",
         local_tmp_dir: str = "/tmp/unzip_cache",
     ):
         self.dbutils = dbutils
-        self.storage_account_name = storage_account_name
-        self.container_name = container_name
+        self.cloud_provider = cloud_provider.lower()
+        self.container_or_bucket = container_or_bucket
         self.input_dir = input_dir.strip('/')
         self.output_dir = output_dir.strip('/')
+        self.storage_account_name = storage_account_name  # Only for Azure
         self.local_tmp_dir = local_tmp_dir
 
         os.makedirs(self.local_tmp_dir, exist_ok=True)
 
-    def _get_abfss_path(self, dir_name: str, file_name: str = "") -> str:
-        return f"abfss://{self.container_name}@{self.storage_account_name}.dfs.core.windows.net/{dir_name}/{file_name}".rstrip('/')
+    def _get_cloud_path(self, dir_name: str, file_name: str = "") -> str:
+        if self.cloud_provider == "azure":
+            return f"abfss://{self.container_or_bucket}@{self.storage_account_name}.dfs.core.windows.net/{dir_name}/{file_name}".rstrip('/')
+        elif self.cloud_provider == "aws":
+            return f"s3://{self.container_or_bucket}/{dir_name}/{file_name}".rstrip('/')
+        else:
+            raise ValueError(f"Unsupported cloud provider: {self.cloud_provider}")
 
     def unzip_selected_and_upload(self, zip_filenames: List[str]) -> None:
-        input_path = self._get_abfss_path(self.input_dir)
-        output_path = self._get_abfss_path(self.output_dir)
+        input_path = self._get_cloud_path(self.input_dir)
+        output_path = self._get_cloud_path(self.output_dir)
 
         for zip_filename in zip_filenames:
             expected_gpkg_name = zip_filename.replace(".zip", ".gpkg")
