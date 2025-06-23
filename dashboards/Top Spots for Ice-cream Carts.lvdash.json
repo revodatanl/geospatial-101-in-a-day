@@ -1,0 +1,57 @@
+{
+  "datasets" : [ {
+    "name" : "4eeb01dc",
+    "displayName" : "Top Park Entries",
+    "query" : "SELECT * FROM geospatial.greenspaces.entry_rank1_gold"
+  } ],
+  "pages" : [ {
+    "name" : "bc50285f",
+    "displayName" : "Top Spots for Ice-cream Carts",
+    "layout" : [ {
+      "widget" : {
+        "name" : "760ccda5",
+        "queries" : [ {
+          "name" : "main_query",
+          "query" : {
+            "datasetName" : "4eeb01dc",
+            "fields" : [ {
+              "name" : "latitude",
+              "expression" : "`latitude`"
+            }, {
+              "name" : "longitude",
+              "expression" : "`longitude`"
+            } ],
+            "disaggregated" : true
+          }
+        } ],
+        "spec" : {
+          "version" : 2,
+          "widgetType" : "symbol-map",
+          "encodings" : {
+            "coordinates" : {
+              "latitude" : {
+                "fieldName" : "latitude",
+                "displayName" : "latitude"
+              },
+              "longitude" : {
+                "fieldName" : "longitude",
+                "displayName" : "longitude"
+              }
+            }
+          },
+          "frame" : {
+            "showTitle" : false,
+            "showDescription" : false
+          }
+        }
+      },
+      "position" : {
+        "x" : 0,
+        "y" : 0,
+        "width" : 6,
+        "height" : 17
+      }
+    } ],
+    "pageType" : "PAGE_TYPE_CANVAS"
+  } ]
+}
