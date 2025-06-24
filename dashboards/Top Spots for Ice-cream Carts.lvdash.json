@@ -2,7 +2,7 @@
   "datasets" : [ {
     "name" : "4eeb01dc",
     "displayName" : "Top Park Entries",
-    "query" : "SELECT * FROM geospatial.greenspaces.entry_rank1_gold"
+    "query" : "SELECT * FROM geospatial.greenspaces.top_entrances_gold"
   } ],
   "pages" : [ {
     "name" : "bc50285f",
